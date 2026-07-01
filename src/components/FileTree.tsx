@@ -1,11 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ProjectFile, DecompiledSourceCache } from "@/lib/db";
+import SectionHeader from "./SectionHeader";
 
 export type FileSelection =
   | { source: "project"; file: ProjectFile }
   | { source: "vanilla"; path: string };
+
+const CATEGORY_LABELS: Record<string, string> = {
+  block: "Blocks",
+  item: "Items",
+  entity: "Entities",
+  util: "Util",
+  world: "World",
+  server: "Server",
+  client: "Client",
+  network: "Network",
+  registry: "Registry",
+  nbt: "NBT",
+  text: "Text",
+  sound: "Sound",
+  component: "Components",
+};
+
+function categoryKey(path: string): string {
+  const parts = path.split("/");
+  const idx = parts.indexOf("minecraft");
+  return idx >= 0 && parts[idx + 1] ? parts[idx + 1] : "other";
+}
+
+function categoryLabel(key: string): string {
+  return CATEGORY_LABELS[key] ?? key.charAt(0).toUpperCase() + key.slice(1);
+}
+
+function groupByCategory(paths: string[]): Array<[string, string[]]> {
+  const groups = new Map<string, string[]>();
+  for (const path of paths) {
+    const key = categoryKey(path);
+    const list = groups.get(key) ?? [];
+    list.push(path);
+    groups.set(key, list);
+  }
+  return Array.from(groups.entries()).sort((a, b) => categoryLabel(a[0]).localeCompare(categoryLabel(b[0])));
+}
 
 export default function FileTree({
   projectId,
@@ -18,6 +56,7 @@ export default function FileTree({
   const [projectFiles, setProjectFiles] = useState<ProjectFile[]>([]);
   const [cache, setCache] = useState<DecompiledSourceCache | null>(null);
   const [vanillaPaths, setVanillaPaths] = useState<string[]>([]);
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
 
   const loadProjectFiles = () => {
     fetch(`/api/projects/${projectId}/files`)
@@ -60,8 +99,20 @@ export default function FileTree({
       .then((data) => setCache(data.cache));
   }
 
+  function toggleCategory(key: string) {
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  const vanillaGroups = useMemo(() => groupByCategory(vanillaPaths), [vanillaPaths]);
+
   return (
-    <div className="flex h-full flex-col border-r border-zinc-200 dark:border-zinc-800">
+    <div className="flex h-full flex-col">
+      <SectionHeader title="Files" />
       <div className="flex border-b border-zinc-200 text-xs dark:border-zinc-800">
         <button
           className={`flex-1 px-3 py-2 ${tab === "project" ? "bg-zinc-100 font-medium dark:bg-zinc-900" : ""}`}
@@ -105,19 +156,35 @@ export default function FileTree({
             )}
             {cache?.status === "IN_PROGRESS" && <p className="text-zinc-400">Decompiling…</p>}
             {cache?.status === "FAILED" && <p className="text-red-500">{cache.errorMessage}</p>}
-            <ul className="flex flex-col gap-0.5">
-              {vanillaPaths.map((path) => (
-                <li key={path}>
+            <div className="flex flex-col gap-1">
+              {vanillaGroups.map(([key, paths]) => (
+                <div key={key}>
                   <button
-                    className="w-full truncate rounded px-2 py-1 text-left hover:bg-zinc-100 dark:hover:bg-zinc-900"
-                    onClick={() => onSelect({ source: "vanilla", path })}
-                    title={path}
+                    className="flex w-full items-center gap-1 rounded px-2 py-1 text-left text-[11px] font-semibold tracking-wide text-zinc-500 uppercase hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+                    onClick={() => toggleCategory(key)}
                   >
-                    {path}
+                    <span className="inline-block w-3 text-zinc-400">{collapsed.has(key) ? "▸" : "▾"}</span>
+                    {categoryLabel(key)}
+                    <span className="ml-auto font-normal normal-case text-zinc-400">{paths.length}</span>
                   </button>
-                </li>
+                  {!collapsed.has(key) && (
+                    <ul className="flex flex-col gap-0.5 pl-4">
+                      {paths.map((path) => (
+                        <li key={path}>
+                          <button
+                            className="w-full truncate rounded px-2 py-1 text-left hover:bg-zinc-100 dark:hover:bg-zinc-900"
+                            onClick={() => onSelect({ source: "vanilla", path })}
+                            title={path}
+                          >
+                            {path.split("/").pop()}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </div>

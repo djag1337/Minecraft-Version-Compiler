@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Build } from "@/lib/db";
+import SectionHeader from "./SectionHeader";
 
 export default function BuildPanel({ projectId }: { projectId: string }) {
   const [build, setBuild] = useState<Build | null>(null);
@@ -54,30 +55,25 @@ export default function BuildPanel({ projectId }: { projectId: string }) {
   }
 
   return (
-    <div className="flex h-full flex-col border-t border-zinc-200 dark:border-zinc-800">
-      <div className="flex items-center justify-between px-3 py-2">
-        <div className="flex items-center gap-2 text-xs">
-          <span className="font-medium">Build</span>
-          {build && <StatusBadge status={build.status} />}
-        </div>
-        <div className="flex items-center gap-2">
-          {build?.status === "SUCCESS" && (
-            <a
-              className="rounded bg-zinc-200 px-2 py-1 text-xs dark:bg-zinc-800"
-              href={`/api/projects/${projectId}/builds/${build.id}/artifact`}
-            >
-              Download jar
-            </a>
-          )}
-          <button
-            className="rounded bg-zinc-900 px-3 py-1 text-xs font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
-            onClick={triggerBuild}
-            disabled={triggering || build?.status === "RUNNING" || build?.status === "QUEUED"}
+    <div className="flex h-full flex-col">
+      <SectionHeader title="Build">
+        {build && <StatusBadge status={build.status} />}
+        {build?.status === "SUCCESS" && (
+          <a
+            className="rounded bg-zinc-200 px-2 py-1 text-xs dark:bg-zinc-800"
+            href={`/api/projects/${projectId}/builds/${build.id}/artifact`}
           >
-            {triggering ? "Starting…" : "Build"}
-          </button>
-        </div>
-      </div>
+            Download jar
+          </a>
+        )}
+        <button
+          className="rounded bg-zinc-900 px-3 py-1 text-xs font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          onClick={triggerBuild}
+          disabled={triggering || build?.status === "RUNNING" || build?.status === "QUEUED"}
+        >
+          {triggering ? "Starting…" : "Build"}
+        </button>
+      </SectionHeader>
       <pre ref={logsRef} className="flex-1 overflow-auto bg-black p-2 font-mono text-xs text-zinc-100">
         {logs || "No build logs yet."}
       </pre>

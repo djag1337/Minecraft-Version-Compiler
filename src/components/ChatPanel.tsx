@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { AiMessage, ProposedEdit } from "@/lib/db";
+import SectionHeader from "./SectionHeader";
 
 interface StreamingMessage {
   role: "USER" | "ASSISTANT";
@@ -116,7 +117,8 @@ export default function ChatPanel({ projectId, onFilesChanged }: { projectId: st
   }
 
   return (
-    <div className="flex h-full flex-col border-l border-zinc-200 dark:border-zinc-800">
+    <div className="flex h-full flex-col">
+      <SectionHeader title="AI Chat" />
       <div className="flex-1 overflow-y-auto p-3 text-sm">
         {messages.map((message, i) => (
           <div key={message.id ?? i} className="mb-4">

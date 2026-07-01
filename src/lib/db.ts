@@ -140,12 +140,14 @@ CREATE TABLE IF NOT EXISTS builds (
 function openDatabase(): DatabaseSync {
   fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
   const database = new DatabaseSync(DB_PATH);
-  database.exec("PRAGMA foreign_keys = ON;");
-  // WAL + a busy timeout let multiple processes (e.g. Next's parallel build
-  // workers, each importing this module) open the same file concurrently
-  // instead of failing with "database is locked".
-  database.exec("PRAGMA journal_mode = WAL;");
+  // busy_timeout must be set before anything else: it's what makes the
+  // journal_mode switch itself (and everything after) wait out a lock held by
+  // another process — e.g. Next's parallel build workers, each importing this
+  // module and racing to initialize the same fresh file — instead of failing
+  // immediately with "database is locked".
   database.exec("PRAGMA busy_timeout = 5000;");
+  database.exec("PRAGMA journal_mode = WAL;");
+  database.exec("PRAGMA foreign_keys = ON;");
   database.exec(SCHEMA);
   return database;
 }
