@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "examplemod",
+  "version": "${version}",
+  "name": "Example Mod",
+  "description": "Template mod scaffold — overwritten by the project's own fabric.mod.json at build time.",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.example.examplemod.ExampleMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "*",
+    "java": ">=21"
+  }
+}
