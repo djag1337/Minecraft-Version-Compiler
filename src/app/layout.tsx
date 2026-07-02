@@ -37,14 +37,15 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className="flex h-full min-h-full flex-col bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-100">
-        <header className="flex h-12 shrink-0 items-center justify-between border-b border-zinc-200 px-4 dark:border-zinc-800">
-          <Link href="/" className="text-sm font-semibold">
+      <body className="flex h-full min-h-full w-full flex-col overflow-x-hidden bg-zinc-50 text-zinc-900 dark:bg-black dark:text-zinc-100">
+        <header className="flex h-12 shrink-0 items-center justify-between border-b border-zinc-200 bg-white px-4 dark:border-zinc-800 dark:bg-zinc-950">
+          <Link href="/" className="flex items-center gap-2 text-sm font-semibold">
+            <span className="inline-block size-2 rounded-sm bg-emerald-500" aria-hidden />
             Minecraft Version Compiler
           </Link>
           <ThemeToggle />
         </header>
-        <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden">{children}</div>
       </body>
     </html>
   );

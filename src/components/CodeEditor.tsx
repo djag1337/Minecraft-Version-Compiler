@@ -49,8 +49,8 @@ export default function CodeEditor({
   const path = selection ? (selection.source === "project" ? selection.file.path : selection.path) : null;
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs dark:border-zinc-800 dark:bg-zinc-950">
+    <div className="flex h-full min-w-0 flex-col">
+      <div className="flex min-w-0 shrink-0 items-center justify-between gap-2 border-b border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs dark:border-zinc-800 dark:bg-zinc-950">
         <span className="flex min-w-0 items-center gap-2">
           <span className="shrink-0 text-[11px] font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
             Editor
@@ -61,13 +61,13 @@ export default function CodeEditor({
           <button
             onClick={save}
             disabled={!dirty || saving}
-            className="shrink-0 rounded bg-zinc-900 px-2 py-1 text-white disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900"
+            className="shrink-0 rounded-md bg-emerald-600 px-2 py-1 text-white transition-colors hover:bg-emerald-500 disabled:opacity-40 dark:bg-emerald-500 dark:text-emerald-950 dark:hover:bg-emerald-400"
           >
             {saving ? "Saving…" : dirty ? "Save" : "Saved"}
           </button>
         )}
       </div>
-      <div className="flex-1 overflow-auto">
+      <div className="min-w-0 flex-1 overflow-auto">
         {path && (
           <CodeMirror
             value={content}

@@ -55,26 +55,26 @@ export default function BuildPanel({ projectId }: { projectId: string }) {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-w-0 flex-col">
       <SectionHeader title="Build">
         {build && <StatusBadge status={build.status} />}
         {build?.status === "SUCCESS" && (
           <a
-            className="rounded bg-zinc-200 px-2 py-1 text-xs dark:bg-zinc-800"
+            className="rounded-md bg-zinc-200 px-2 py-1 text-xs transition-colors hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700"
             href={`/api/projects/${projectId}/builds/${build.id}/artifact`}
           >
             Download jar
           </a>
         )}
         <button
-          className="rounded bg-zinc-900 px-3 py-1 text-xs font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="shrink-0 rounded-md bg-emerald-600 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-emerald-500 disabled:opacity-50 dark:bg-emerald-500 dark:text-emerald-950 dark:hover:bg-emerald-400"
           onClick={triggerBuild}
           disabled={triggering || build?.status === "RUNNING" || build?.status === "QUEUED"}
         >
           {triggering ? "Starting…" : "Build"}
         </button>
       </SectionHeader>
-      <pre ref={logsRef} className="flex-1 overflow-auto bg-black p-2 font-mono text-xs text-zinc-100">
+      <pre ref={logsRef} className="min-w-0 flex-1 overflow-auto bg-black p-2 font-mono text-xs text-zinc-100">
         {logs || "No build logs yet."}
       </pre>
     </div>

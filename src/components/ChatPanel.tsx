@@ -117,33 +117,38 @@ export default function ChatPanel({ projectId, onFilesChanged }: { projectId: st
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-w-0 flex-col">
       <SectionHeader title="AI Chat" />
-      <div className="flex-1 overflow-y-auto p-3 text-sm">
+      <div className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-3 text-sm">
         {messages.map((message, i) => (
-          <div key={message.id ?? i} className="mb-4">
+          <div key={message.id ?? i} className="mb-4 min-w-0">
             <div className="mb-1 text-xs font-medium text-zinc-500">
               {message.role === "USER" ? "You" : "Assistant"}
             </div>
-            <div className="whitespace-pre-wrap">{message.content || (sending && i === messages.length - 1 ? "…" : "")}</div>
+            <div className="min-w-0 break-words whitespace-pre-wrap">
+              {message.content || (sending && i === messages.length - 1 ? "…" : "")}
+            </div>
             {message.proposedEdits && message.proposedEdits.length > 0 && (
               <div className="mt-2 flex flex-col gap-2">
                 {message.proposedEdits.map((edit) => (
-                  <div key={edit.path} className="rounded border border-zinc-200 p-2 text-xs dark:border-zinc-800">
-                    <div className="mb-1 flex items-center justify-between gap-2">
+                  <div
+                    key={edit.path}
+                    className="rounded-md border border-zinc-200 bg-zinc-50 p-2 text-xs dark:border-zinc-800 dark:bg-zinc-900/50"
+                  >
+                    <div className="mb-1 flex min-w-0 items-center justify-between gap-2">
                       <span className="truncate font-mono">{edit.path}</span>
                       <span className="shrink-0 text-zinc-400">{edit.status}</span>
                     </div>
                     {edit.status === "pending" && message.id && (
                       <div className="flex gap-2">
                         <button
-                          className="rounded bg-emerald-600 px-2 py-1 text-white"
+                          className="rounded-md bg-emerald-600 px-2 py-1 text-white transition-colors hover:bg-emerald-500 dark:bg-emerald-500 dark:text-emerald-950 dark:hover:bg-emerald-400"
                           onClick={() => applyEdit(message.id!, edit.path, "accept")}
                         >
                           Accept
                         </button>
                         <button
-                          className="rounded bg-zinc-200 px-2 py-1 dark:bg-zinc-800"
+                          className="rounded-md bg-zinc-200 px-2 py-1 transition-colors hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700"
                           onClick={() => applyEdit(message.id!, edit.path, "reject")}
                         >
                           Reject
@@ -158,9 +163,9 @@ export default function ChatPanel({ projectId, onFilesChanged }: { projectId: st
         ))}
         <div ref={bottomRef} />
       </div>
-      <div className="flex gap-2 border-t border-zinc-200 p-2 dark:border-zinc-800">
+      <div className="flex min-w-0 gap-2 border-t border-zinc-200 p-2 dark:border-zinc-800">
         <textarea
-          className="flex-1 resize-none rounded border border-zinc-300 bg-transparent px-2 py-1.5 text-sm dark:border-zinc-700"
+          className="min-w-0 flex-1 resize-none rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 focus:outline-none dark:border-zinc-700"
           rows={2}
           placeholder="Describe the mod feature you want…"
           value={input}
@@ -173,7 +178,7 @@ export default function ChatPanel({ projectId, onFilesChanged }: { projectId: st
           }}
         />
         <button
-          className="rounded bg-zinc-900 px-3 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="shrink-0 rounded-md bg-emerald-600 px-3 text-sm font-medium text-white transition-colors hover:bg-emerald-500 disabled:opacity-50 dark:bg-emerald-500 dark:text-emerald-950 dark:hover:bg-emerald-400"
           onClick={send}
           disabled={sending}
         >

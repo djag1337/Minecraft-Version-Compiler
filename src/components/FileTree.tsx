@@ -111,23 +111,31 @@ export default function FileTree({
   const vanillaGroups = useMemo(() => groupByCategory(vanillaPaths), [vanillaPaths]);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-w-0 flex-col">
       <SectionHeader title="Files" />
       <div className="flex border-b border-zinc-200 text-xs dark:border-zinc-800">
         <button
-          className={`flex-1 px-3 py-2 ${tab === "project" ? "bg-zinc-100 font-medium dark:bg-zinc-900" : ""}`}
+          className={`flex-1 truncate border-b-2 px-2 py-2 transition-colors ${
+            tab === "project"
+              ? "border-emerald-500 font-medium text-zinc-900 dark:text-zinc-100"
+              : "border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+          }`}
           onClick={() => setTab("project")}
         >
           My Files
         </button>
         <button
-          className={`flex-1 px-3 py-2 ${tab === "vanilla" ? "bg-zinc-100 font-medium dark:bg-zinc-900" : ""}`}
+          className={`flex-1 truncate border-b-2 px-2 py-2 transition-colors ${
+            tab === "vanilla"
+              ? "border-emerald-500 font-medium text-zinc-900 dark:text-zinc-100"
+              : "border-transparent text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
+          }`}
           onClick={() => setTab("vanilla")}
         >
-          Vanilla Source
+          Vanilla
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto p-2 text-sm">
+      <div className="min-w-0 flex-1 overflow-y-auto p-2 text-sm">
         {tab === "project" && (
           <ul className="flex flex-col gap-0.5">
             {projectFiles.map((file) => (
@@ -148,7 +156,7 @@ export default function FileTree({
           <div className="flex flex-col gap-2">
             {(!cache || cache.status === "PENDING" || cache.status === "FAILED") && (
               <button
-                className="rounded bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+                className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-emerald-500 dark:bg-emerald-500 dark:text-emerald-950 dark:hover:bg-emerald-400"
                 onClick={triggerDecompile}
               >
                 {cache?.status === "FAILED" ? "Retry decompile" : "Decompile vanilla source"}
